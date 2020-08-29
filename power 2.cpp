@@ -5,6 +5,8 @@
 #define nosol -1
 #define linear -2
 #define infinity -3
+#define OneRoot 1
+#define TwoRoots 2
 //-----------------------------------------------
 //! Solves a square equating ax2 + bx + c = 0
 //!  @param [in] a   a-coefficient
@@ -19,11 +21,15 @@
 //!  @note linear equation -   linear
 //!  @note zero solutions  -    nosol
 //-----------------------------------------------
+int Zero(double a)
+{
+return (fabs(a) < 1e-6);
+}
 int korni(double a, double b, double c, double* x1, double* x2)
 {
-if ((a ==0) and (b == 0) and (c == 0))
+if ((Zero(a)) and (Zero(b)) and (Zero(b)))
     return infinity;
-if (a != 0)
+if (not(Zero(a)))
     {
     double d = 0;
     d = b*b - 4*a*c;
@@ -31,13 +37,13 @@ if (a != 0)
         {
         *x1 = (-b + sqrt(d)) / (2*a);
         *x2 = (-b - sqrt(d)) / (2*a);
-        return 2;
+        return TwoRoots;
         }
     else if (d == 0)
         {
         *x1 =  (-1*b)/(2*a);
         *x2 =  (-1*b)/(2*a);
-        return 1;
+        return OneRoot;
         }
     else return nosol;
     }
@@ -56,11 +62,10 @@ int main()
         a = b = c = x1 = x2 = 0;
         scanf("%lg %lg %lg", &a, &b, &c);
 
-    int kolvo = 0;
-        kolvo = korni(a, b, c, &x1, &x2);
-    if (kolvo == 2)
+    int kolvo = korni(a, b, c, &x1, &x2);
+    if (kolvo == TwoRoots)
         printf("x1 = %3.3lg\nx2 = %3.3lg", x1, x2);
-    else if (kolvo == 1)
+    else if (kolvo == OneRoot)
         printf("x1 = x2 = %.3lg", x1);
     else if (kolvo == nosol)
         printf("This equation has no solutions");
