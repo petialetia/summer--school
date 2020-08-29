@@ -29,7 +29,6 @@ int Zero(double a)
 }
 int korni(double a, double b, double c, double* x1, double* x2)
 {
-assert
 if ((Zero(a)) and (Zero(b)) and (Zero(b)))
     return infinity;
 if (not(Zero(a)))
