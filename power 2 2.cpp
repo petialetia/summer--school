@@ -11,7 +11,7 @@
 //! Solves a square equating ax2 + bx + c = 0
 //!  @param [in] a   a-coefficient
 //!  @param [in] b   b-coefficient
-//!  @param [in] b   b-coefficient
+//!  @param [in] c   c-coefficient
 //!  @param [out] x1 first root
 //!  @param [out] x2 second root
 //!
@@ -29,6 +29,10 @@ int Zero(double a)
 }
 int korni(double a, double b, double c, double* x1, double* x2)
 {
+assert (x1 != NULL);
+assert (x2 != NULL);
+assert (x1 != x2);
+    
 if ((Zero(a)) and (Zero(b)) and (Zero(b)))
     return infinity;
 if (not(Zero(a)))
