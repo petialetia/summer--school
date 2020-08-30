@@ -9,19 +9,19 @@
 #define TwoRoots 2
 //-----------------------------------------------
 //! Solves a square equating ax2 + bx + c = 0
-//!  @param [in] a   a-coefficient
-//!  @param [in] b   b-coefficient
-//!  @param [in] c   c-coefficient
-//!  @param [out] x1 first root
-//!  @param [out] x2 second root
+//!  @param [in]   a     a-coefficient
+//!  @param [in]   b     b-coefficient
+//!  @param [in]   c     c-coefficient
+//!  @param [out] x1        first root
+//!  @param [out] x2       second root
 //!
 //!  @return Number of roots
 //!
-//!  @note infinity roots  - infinity
-//!  @note linear equation -   linear
-//!  @note zero solutions  -    nosol
-//!  @note One root - OneRoot
-//!  @note Two roots - TwoRoots
+//!  @note infinity roots  -        infinity
+//!  @note linear equation -      linear
+//!  @note zero solutions  -       nosol
+//!  @note One root        -     OneRoot
+//!  @note Two roots       -    TwoRoots
 //-----------------------------------------------
 int Zero(double a)
 {
