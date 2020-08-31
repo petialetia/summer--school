@@ -32,7 +32,7 @@ int IsZero(double a)
 }
 
 
-int SolveLinear(double b, double c, double* x1)
+int SolveLinear(double b, double c, double* x1, double* x2)
 {
     assert (isfinite(b));
     assert (isfinite(c));
@@ -40,11 +40,12 @@ int SolveLinear(double b, double c, double* x1)
 
     if ((IsZero(b)) and (IsZero(c)))
         return INFINITY_ROOTS;
-    if (b = 0)
+    if (IsZero(b))
         return NOSOL;
     else
         {
-        *x1 = (-1*c/b);
+        *x1 = -c/b;
+        *x2 = -c/b;
         return ONE_ROOT;
         }
 }
@@ -61,7 +62,7 @@ int SolveSquare(double a, double b, double c, double* x1, double* x2)
     assert (x1 != x2);
 
     if (IsZero(a))
-          return SolveLinear(b, c, x1);
+          return SolveLinear(b, c, x1, x2);
     else
         {
         double d = b*b - 4*a*c;
@@ -87,8 +88,8 @@ void Test_SolveSquare();
 
 int main()
 {
-//  Test_SolveSquare();
-//  return 0;
+// Test_SolveSquare();
+// return 0;
     printf("This is program to solve power 2 equations\n");
     printf("Put coefficients with space\n");
 
@@ -130,7 +131,9 @@ void Test_SolveSquare()
          b      = 0,
          c      = 0,
          realx1 = 0,
-         realx2 = 0;
+         realx2 = 0,
+         Val    = 0,
+         ExpVal = 0;
 
   resx1  =  2,
   resx2  =  4,
@@ -145,6 +148,7 @@ void Test_SolveSquare()
                       " expected x1 = %g x2 = %g\n"
                       " real     x1 = %g x2 = %g\n",
                       __LINE__, resx1, resx2, realx1, realx2);
+
   resx1  =  3,
   resx2  =  3,
   a      =  1,
@@ -158,6 +162,7 @@ void Test_SolveSquare()
                       " expected x1 = %g x2 = %g\n"
                       " real     x1 = %g x2 = %g\n",
                       __LINE__, resx1, resx2, realx1, realx2);
+
   resx1  =  2,
   resx2  =  2,
   a      =  0,
@@ -172,4 +177,33 @@ void Test_SolveSquare()
                       " real     x1 = %g x2 = %g\n",
                       __LINE__, resx1, resx2, realx1, realx2);
 
+  ExpVal = NOSOL,
+  a      =     0,
+  b      =     0,
+  c      =     5,
+          Val = SolveSquare(a, b, c, &realx1, &realx2);
+          if (Val == ExpVal)
+            printf("Test on line %d OK\n",__LINE__);
+          else
+            printf("Test on line %d failed\n"
+                   " expected Val = %g\n"
+                   " real     Val = %g\n",
+                   __LINE__, ExpVal, Val);
+
+  ExpVal = INFINITY_ROOTS,
+  a      =     0,
+  b      =     0,
+  c      =     0,
+          Val = SolveSquare(a, b, c, &realx1, &realx2);
+          if (Val == ExpVal)
+            printf("Test on line %d OK\n",__LINE__);
+          else
+            printf("Test on line %d failed\n"
+                   " expected Val = %g\n"
+                   " real     Val = %g\n",
+                   __LINE__, ExpVal, Val);
+
 }
+
+
+
