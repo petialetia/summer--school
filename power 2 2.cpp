@@ -68,8 +68,8 @@ int SolveSquare(double a, double b, double c, double* x1, double* x2)
         double d = b*b - 4*a*c;
         if (IsZero(d))
             {
-            *x1 =  (-1*b)/(2*a);
-            *x2 =  (-1*b)/(2*a);
+            *x1 =  (-b)/(2*a);
+            *x2 =  (-b)/(2*a);
             return ONE_ROOT;
             }
         else if (d > 0)
