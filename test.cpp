@@ -13,7 +13,7 @@ int main()
     FILE* fa;
     fp = fopen("test.txt","r");
     fa = fopen("output.txt","w");
-    char  s[N][N] = {0},{0};
+    char  s[N][N] = {0};
     int NumS = 0,
         flag = 1;
 
@@ -52,11 +52,6 @@ void putline(char* s, FILE* fa, int NumS, int* flag)
     for (i = 0; ((s[i] != '\0') and (s[i] != '\n'));++i)
         putc(s[i], fa);
 }
-
-
-
-
-
 
 
 
