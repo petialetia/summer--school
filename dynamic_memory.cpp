@@ -21,7 +21,7 @@ int* read_file(FILE* in, )
 int main()
 {
     FILE* in = fopen("input.txt","w");
-    read_file(in);
+    int* start = read_file(in);
 
 
     return 0;
