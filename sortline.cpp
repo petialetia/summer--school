@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-const int N = 100;
 
+const int N = 100;
 
 void getline(char* s, FILE* in)
 {
@@ -22,7 +22,7 @@ void putline(char* s, FILE* out)
 }
 
 
-// AnyOf проверяет встречается ли символ с в строке s
+//AnyOf checks if character c occurs in string s
 int AnyOf(char c, char* s)
 {
     int i = 0;
