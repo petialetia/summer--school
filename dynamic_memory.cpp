@@ -10,7 +10,7 @@ int len_of_file(FILE* in)
 }
 
 
-int* read_file(FILE* in, )
+int* read_file(FILE* in)
 {
     int len = len_of_file(in);
     int* start = calloc(len, sizeof(char))
