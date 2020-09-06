@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#inclide <stdint.h>
+#include <stdint.h>
 
 const int N = 100;
 
@@ -25,30 +25,58 @@ char* read_file(FILE* in)
 
 void read_in_2D(char* start, char A[][N])
 {
-int32_t i = 0,
-        j = 0,
-        z = 0;
-while ((c = start[z++]) != EOF)
-    if (c == '\n')
-        {
-        A[i][j] = '\0';
-        i = 0;
-        j++;
-        }
-    else 
-        A[i++][j] = c;
+    int32_t i = 0,
+            j = 0,
+            z = 0;
+    char c = 0;
+    while ((c = start[z++]) != EOF)
+    {
+        if (c == '\n')
+            {
+            A[i][j] = '\0';
+            i = 0;
+            j++;
+            }
+        else
+            {
+            A[i][j] = c;
+            ++i;
+            }
+    }
 }
 
 
+void print_2D(char A[][N], FILE* out)
+{
+    int i = 0,
+        j = 0;
+    while (A[i][j] != EOF)
+        {
+        if (A[i][j] != '\0')
+            putchar(A[i++][j]);
+        else
+            {
+            putchar('\n');
+            i = 0;
+            ++j;
+            }
+        }
+
+}
+
 int main()
 {
-    FILE* in = fopen("input.txt","r");
+    FILE* in  = fopen("input.txt", "r");
+    FILE* out = fopen("output.txt","w");
     char* start = read_file(in);
 
     char A[N][N] = {0};
 
-    //read_in_2D(start, A);
+    read_in_2D(start, A);
     free(start);
+    printf("%c", A[0][0]);
+    print_2D(A, out);
 
     return 0;
 }
+
