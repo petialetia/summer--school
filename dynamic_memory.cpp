@@ -51,7 +51,6 @@ void print_2D(char A[][N], FILE* out)
     int i = 0,
         j = 0;
     while (A[i][j] != EOF)
-        {
         if (A[i][j] != '\0')
             putchar(A[i++][j]);
         else
@@ -60,8 +59,6 @@ void print_2D(char A[][N], FILE* out)
             i = 0;
             ++j;
             }
-        }
-
 }
 
 int main()
@@ -74,7 +71,7 @@ int main()
 
     read_in_2D(start, A);
     free(start);
-    printf("%c", A[0][0]);
+
     print_2D(A, out);
 
     return 0;
