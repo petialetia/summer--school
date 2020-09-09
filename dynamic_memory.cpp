@@ -81,6 +81,5 @@ int main()
 
     free(start);
     free(lines);
-    
     return 0;
 }
