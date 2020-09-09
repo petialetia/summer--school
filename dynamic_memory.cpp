@@ -17,7 +17,7 @@ uint64_t len_of_file(FILE* in)
 
 int num_lines(char* start)
 {
-    int j = 0;
+    int j = 1;
     for (int i = 0; start[i] != EOF; ++i)
         if (start[i] == '\n') j++;
     return j;
@@ -49,8 +49,14 @@ void make_lines(char* start, char** lines)
 
 void print_lines(char** lines, int num, FILE* out)
 {
-    for (int j = 0; j <= num; j++)
+    for (int j = 0; j < num; j++)
         fprintf(out, "%s\n", lines[j]);
+}
+
+
+int strcmp_void(const void* line1, const void* line2)
+{
+    return strcmp((const char*)line1, (const char*)line2);
 }
 
 
@@ -66,16 +72,15 @@ int main()
     lines[0] = start;
     make_lines(start, lines);
 
+    qsort(lines, num, sizeof(char*), strcmp_void);
 
     print_lines(lines, num, out);
-
-    qsort(lines, num + 1, sizeof(char*), (char*, char*) strcmp);
 
     fclose(in );
     fclose(out);
 
     free(start);
     free(lines);
+    
     return 0;
 }
-
