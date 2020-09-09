@@ -1,65 +1,58 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 const int N = 100;
 
 
-int32_t len_of_file(FILE* in)
+uint64_t len_of_file(FILE* in)
 {
     fseek(in, 0, SEEK_END);
-    int32_t pos = ftell(in);
+    uint64_t pos = ftell(in);
     fseek(in, 0, SEEK_SET);
     return pos;
 }
 
 
+int num_lines(char* start)
+{
+    int j = 0;
+    for (int i = 0; start[i] != EOF; ++i)
+        if (start[i] == '\n') j++;
+    return j;
+}
+
+
 char* read_file(FILE* in)
 {
-    int32_t len = len_of_file(in);
-    char* start = (char*)calloc(len, sizeof(char));
+    uint64_t len = len_of_file(in);
+    char* start = (char*)calloc(len + 1, sizeof(char));
     fread(start, sizeof(char), len, in);
     return start;
 }
 
 
-void read_in_2D(char* start, char A[][N])
+void make_lines(char* start, char** lines)
 {
-    int32_t i = 0,
-            j = 0,
-            z = 0;
-    char c = 0;
-    while ((c = start[z++]) != EOF)
+    int j = 1;
+    for (int i = 0; start[i] != EOF; ++i)
     {
-        if (c == '\n')
-            {
-            A[i][j] = '\0';
-            i = 0;
-            j++;
-            }
-        else
-            {
-            A[i][j] = c;
-            ++i;
-            }
+        if (start[i] == '\n')
+        {
+            start[i] = '\0';
+            lines[j++] = &start[i+1];
+        }
     }
 }
 
 
-void print_2D(char A[][N], FILE* out)
+void print_lines(char** lines, int num, FILE* out)
 {
-    int i = 0,
-        j = 0;
-    while (A[i][j] != EOF)
-        if (A[i][j] != '\0')
-            putchar(A[i++][j]);
-        else
-            {
-            putchar('\n');
-            i = 0;
-            ++j;
-            }
+    for (int j = 0; j <= num; j++)
+        fprintf(out, "%s\n", lines[j]);
 }
+
 
 int main()
 {
@@ -67,13 +60,22 @@ int main()
     FILE* out = fopen("output.txt","w");
     char* start = read_file(in);
 
-    char A[N][N] = {0};
+    int num = num_lines(start);
+    char** lines = (char**)calloc(num + 1, sizeof(char**));
 
-    read_in_2D(start, A);
+    lines[0] = start;
+    make_lines(start, lines);
+
+
+    print_lines(lines, num, out);
+
+    qsort(lines, num + 1, sizeof(char*), (char*, char*) strcmp);
+
+    fclose(in );
+    fclose(out);
+
     free(start);
-
-    print_2D(A, out);
-
+    free(lines);
     return 0;
 }
 
