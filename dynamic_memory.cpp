@@ -56,7 +56,7 @@ void print_lines(char** lines, int num, FILE* out)
 
 int strcmp_void(const void* line1, const void* line2)
 {
-    return strcmp((const char*)line1, (const char*)line2);
+    return strcmp(*(const char**)line1, *(const char**)line2);
 }
 
 
@@ -83,3 +83,4 @@ int main()
     free(lines);
     return 0;
 }
+
