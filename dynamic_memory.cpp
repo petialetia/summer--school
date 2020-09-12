@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 const int N = 100;
 
 
 uint64_t len_of_file(FILE* in)
 {
+    assert(in != NULL);
     fseek(in, 0, SEEK_END);
     uint64_t pos = ftell(in);
     fseek(in, 0, SEEK_SET);
@@ -17,6 +19,7 @@ uint64_t len_of_file(FILE* in)
 
 int num_lines(char* start)
 {
+    assert(start != NULL);
     int j = 1;
     for (int i = 0; start[i] != EOF; ++i)
         if (start[i] == '\n') j++;
@@ -26,6 +29,7 @@ int num_lines(char* start)
 
 char* read_file(FILE* in)
 {
+    assert(in != NULL);
     uint64_t len = len_of_file(in);
     char* start = (char*)calloc(len + 1, sizeof(char));
     fread(start, sizeof(char), len, in);
@@ -35,6 +39,8 @@ char* read_file(FILE* in)
 
 void make_lines(char* start, char** lines)
 {
+    assert(start != NULL);
+    assert(lines != NULL);
     int j = 1;
     for (int i = 0; start[i] != EOF; ++i)
     {
@@ -47,8 +53,9 @@ void make_lines(char* start, char** lines)
 }
 
 
-void print_lines(const char** lines, int num, FILE* out)
+void print_lines(const char* const* const lines, int num, FILE* out)
 {
+    assert(lines != NULL);
     for (int j = 0; j < num; j++)
         fprintf(out, "%s\n", lines[j]);
 }
@@ -56,6 +63,8 @@ void print_lines(const char** lines, int num, FILE* out)
 
 int strcmp_void(const void* line1, const void* line2)
 {
+    assert(line1 != NULL);
+    assert(line2 != NULL);
     return strcmp(*(const char**)line1, *(const char**)line2);
 }
 
