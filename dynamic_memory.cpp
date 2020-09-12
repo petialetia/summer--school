@@ -38,6 +38,7 @@ void make_lines(char* start, char** lines)
 {
     assert(start != NULL);
     assert(lines != NULL);
+    
     int j = 1;
     for (int i = 0; start[i] != EOF; ++i)
     {
@@ -53,6 +54,8 @@ void make_lines(char* start, char** lines)
 void print_lines(const char* const* const lines, int num, FILE* out)
 {
     assert(lines != NULL);
+    assert(out   != NULL);
+    
     for (int j = 0; j < num; j++)
         fprintf(out, "%s\n", lines[j]);
 }
@@ -62,12 +65,16 @@ int strcmp_void(const void* line1, const void* line2)
 {
     assert(line1 != NULL);
     assert(line2 != NULL);
+    
     return strcmp(*(const char**)line1, *(const char**)line2);
 }
 
 
 int SortFromEnd_cmp(const void* line1, const void* line2)
 {
+    assert(line1 != NULL);
+    assert(line2 != NULL);
+    
     char* oldLine1 = *(char**)line1;
     char* oldLine2 = *(char**)line2;
     int k = strcmp(strrev(*(char**)line1), strrev(*(char**)line2));
