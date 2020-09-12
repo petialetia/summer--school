@@ -68,9 +68,11 @@ int strcmp_void(const void* line1, const void* line2)
 
 int SortFromEnd_cmp(const void* line1, const void* line2)
 {
+    char* oldLine1 = *(char**)line1;
+    char* oldLine2 = *(char**)line2;
     int k = strcmp(strrev(*(char**)line1), strrev(*(char**)line2));
-    strrev(*(char**)line1);
-    strrev(*(char**)line2);
+    line1 = oldLine1;
+    line2 = oldLine2;
     return k;
 }
 
@@ -98,4 +100,3 @@ int main()
     free(lines);
     return 0;
 }
-
