@@ -47,7 +47,7 @@ void make_lines(char* start, char** lines)
 }
 
 
-void print_lines(char** lines, int num, FILE* out)
+void print_lines(const char** lines, int num, FILE* out)
 {
     for (int j = 0; j < num; j++)
         fprintf(out, "%s\n", lines[j]);
@@ -72,7 +72,7 @@ int main()
     lines[0] = start;
     make_lines(start, lines);
 
-    qsort(lines, num, sizeof(char*), strcmp_void);
+    qsort(lines, num, sizeof(char*),strcmp_void);
 
     print_lines(lines, num, out);
 
@@ -83,4 +83,3 @@ int main()
     free(lines);
     return 0;
 }
-
