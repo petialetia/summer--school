@@ -4,9 +4,6 @@
 #include <string.h>
 #include <assert.h>
 
-const int N = 100;
-
-
 uint64_t len_of_file(FILE* in)
 {
     assert(in != NULL);
@@ -69,6 +66,15 @@ int strcmp_void(const void* line1, const void* line2)
 }
 
 
+int SortFromEnd_cmp(const void* line1, const void* line2)
+{
+    int k = strcmp(strrev(*(char**)line1), strrev(*(char**)line2));
+    strrev(*(char**)line1);
+    strrev(*(char**)line2);
+    return k;
+}
+
+
 int main()
 {
     FILE* in  = fopen("input.txt", "r");
@@ -81,7 +87,7 @@ int main()
     lines[0] = start;
     make_lines(start, lines);
 
-    qsort(lines, num, sizeof(char*),strcmp_void);
+    qsort(lines, num, sizeof(char*), SortFromEnd_cmp);
 
     print_lines(lines, num, out);
 
@@ -92,3 +98,4 @@ int main()
     free(lines);
     return 0;
 }
+
