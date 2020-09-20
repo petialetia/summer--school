@@ -2,49 +2,61 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-//#include "onegin.hpp"
 #include <assert.h>
+#include <ctype.h>
 //#include "TxLib.h"
 
 
 struct str
 {
-    char* str_;
-    int   len_ =   0 ;
+    char* str_ = nullptr;
+    int   len_ =       0;
 };
 
 
 uint64_t len_of_file(FILE* in)
 {
     assert(in != NULL);
+
     fseek(in, 0, SEEK_END);
     uint64_t pos = ftell(in);
     fseek(in, 0, SEEK_SET);
+
     return pos;
 }
 
 
-int num_lines(char* start)
+int isletter(char letter)
+{
+    if (((letter >= 'А') && ('п' >= letter)) || ((letter >= 'A') && ('z' >= letter)) || (('р' >= letter) && ('я' <= letter))) return 1;
+    return 0;
+}
+
+
+int num_lines(char* start, uint64_t num_symbols)
 {
     assert(start != NULL);
     int j = 1;
-    for (int i = 0; start[i] != EOF; ++i)
+    for (uint64_t i = 0; i < num_symbols; ++i)
         if (start[i] == '\n') j++;
     return j;
 }
 
 
-char* read_file(FILE* in)
+void read_file(FILE* in, uint64_t num_symbols, char* start)
 {
     assert(in != NULL);
-    uint64_t len = len_of_file(in);
-    char* start  = (char*)calloc(len + 1, sizeof(char));
-    fread(start, sizeof(char), len, in);
-    return start;
+
+    fread(start, sizeof(char), num_symbols, in);
+    //only for windows
+    for (int i = 0, j = 0; i < num_symbols; ++i)
+    {
+        if (start[i] != '\r') start[j++] = start[i];
+    }
 }
 
 
-void make_lines(char* start, struct str** lines)
+void make_lines(char* start, str* lines, uint64_t num_symbols)//условная компиляция(линукс или винда и в зависимости убирает \r)
 {
     assert(start != NULL);
     assert(lines != NULL);
@@ -52,63 +64,97 @@ void make_lines(char* start, struct str** lines)
     int lastI = 0;
     int j     = 0;
 
-    (lines[j++])->str_ = start;
-    printf("%s", (lines[j++])->str_);
-    for (int i = 0; start[i] != EOF; ++i)
+    lines[j++].str_ = start;
+
+    for (uint64_t i = 0; i < num_symbols; ++i)
     {
         if (start[i] == '\n')
         {
             start[i] = '\0';
-            (lines[j])->len_ = i - lastI;
-            lastI = i;
-            (lines[j++])->str_ = &start[i+1];
+            lines[j - 1].len_ = i - lastI;
+            lastI = i + 1;
+            lines[j++].str_ = &start[i+1];
         }
     }
+    lines[j - 1].len_ = num_symbols - lastI - 4;
 }
 
 
-void print_lines(struct str** lines, int num, FILE* const out)
+void print_lines(struct str* lines, int num, FILE* const out)
 {
     assert(lines != NULL);
     assert(out   != NULL);
-    printf("sad");
+
     for (int j = 0; j < num; j++)
-        fprintf(out, "%s   %d\n", (lines[j])->str_, (lines[j])->len_);
+        fprintf(out, "%s\n", lines[j].str_);
 }
 
 
-int strcmp_void(const void* line1, const void* line2)
+int str_cmp_with_begin(const void* arg1, const void* arg2)
 {
-    assert(line1 != NULL);
-    assert(line2 != NULL);
+    int i = 0,
+        j = 0;
 
-    return strcmp(*(const char**)line1, *(const char**)line2);
+    if ((*(str*)arg1).len_ == 0) return  1;
+    if ((*(str*)arg2).len_ == 0) return -1;
+
+
+    while ((!(isletter((*(str*)arg1).str_[i]))) && (i < (*(str*)arg1).len_)) i++;
+    while ((!(isletter((*(str*)arg2).str_[j]))) && (j < (*(str*)arg2).len_)) j++;
+
+    while (tolower((*(str*)arg1).str_[i]) == tolower((*(str*)arg2).str_[j]))
+    {
+        i++;
+        j++;
+    }
+    return (tolower((*(str*)arg1).str_[i]) - tolower((*(str*)arg2).str_[j]));
 }
 
 
-int strcmp_FromEnd(const void* line1, const void* line2)
+int str_cmp_with_end(const void* arg1, const void* arg2)
 {
-    assert(line1 != NULL);
-    assert(line2 != NULL);
+    int i = (*(str*)arg1).len_,
+        j = (*(str*)arg2).len_;
 
+    if (i == 0) return  1;
+    if (j == 0) return -1;
+
+    while ((!(isletter((*(str*)arg1).str_[i]))) && (i > 0)) i--;
+    while ((!(isletter((*(str*)arg2).str_[j]))) && (j > 0)) j--;
+
+    while (tolower((*(str*)arg1).str_[i]) == tolower((*(str*)arg2).str_[j]))
+    {
+        i--;
+        j--;
+    }
+
+    return tolower((*(str*)arg1).str_[i]) - tolower((*(str*)arg2).str_[j]);
 }
+
+void Test_isletter();
 
 
 int main()
 {
-    FILE* const in  = fopen("input.txt",  "r");
+    //Test_isletter();
+    //return 0;
+
+    FILE* const in  = fopen("inputbl.txt",  "r");
     FILE* const out = fopen("output.txt", "w");
 
-    char* start = read_file(in);
+    uint64_t num_symbols = len_of_file(in);
 
-    int num = num_lines(start);
-    struct str* lines = (str*)calloc(num + 1, sizeof(str));
+    char* start  = (char*)calloc(num_symbols + 1, sizeof(char));
+    read_file(in, num_symbols, start);
+    int num_str = num_lines(start, num_symbols);
 
-    make_lines(start, &lines);
+    struct str* lines = (str*)calloc(num_str + 1, sizeof(str));
 
-    //qsort(lines, num, sizeof(char*), strcmp_void);
+    make_lines(start, lines, num_symbols);
 
-    print_lines(&lines, num, out);
+    qsort(lines, num_str, sizeof(str), str_cmp_with_end);
+
+    print_lines(lines, num_str, out);
 
     fclose(in );
     fclose(out);
@@ -117,3 +163,29 @@ int main()
     free(lines);
     return 0;
 }
+
+void Test_isletter()
+{
+    printf("Test \"isletter\"\n");
+
+    if (isletter('a') == 1) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    if (isletter('г') == 1) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    if (isletter('G') == 1) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    if (isletter('Ы') == 1) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    if (isletter('?') == 0) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    if (isletter('6') == 0) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+}
+
+
