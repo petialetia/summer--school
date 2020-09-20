@@ -6,7 +6,6 @@
 #include <ctype.h>
 //#include "TxLib.h"
 
-
 struct str
 {
     char* str_ = nullptr;
@@ -48,15 +47,16 @@ void read_file(FILE* in, uint64_t num_symbols, char* start)
     assert(in != NULL);
 
     fread(start, sizeof(char), num_symbols, in);
-    //only for windows
+    #if _WIN32
     for (int i = 0, j = 0; i < num_symbols; ++i)
     {
         if (start[i] != '\r') start[j++] = start[i];
     }
+    #endif
 }
 
 
-void make_lines(char* start, str* lines, uint64_t num_symbols)//условная компиляция(линукс или винда и в зависимости убирает \r)
+void make_lines(char* start, str* lines, uint64_t num_symbols)
 {
     assert(start != NULL);
     assert(lines != NULL);
@@ -132,12 +132,14 @@ int str_cmp_with_end(const void* arg1, const void* arg2)
 }
 
 void Test_isletter();
+void Test_str_cmp_with_begin();
 
 
 int main()
 {
+    Test_str_cmp_with_begin()
     //Test_isletter();
-    //return 0;
+    return 0;
 
     FILE* const in  = fopen("input.txt",  "r");
     FILE* const out = fopen("output.txt", "w");
@@ -152,7 +154,7 @@ int main()
 
     make_lines(start, lines, num_symbols);
 
-    qsort(lines, num_str, sizeof(str), str_cmp_with_begin);
+    qsort(lines, num_str, sizeof(str), str_cmp_with_end);
 
     print_lines(lines, num_str, out);
 
@@ -180,12 +182,11 @@ void Test_isletter()
     if (isletter('Ы') == 1) printf("Test in line %d OK\n", __LINE__);
     else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
 
-    if (isletter('»') == 0) printf("Test in line %d OK\n", __LINE__);
+    if (isletter('?') == 0) printf("Test in line %d OK\n", __LINE__);
     else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
 
     if (isletter('6') == 0) printf("Test in line %d OK\n", __LINE__);
     else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
 
 }
-
 
