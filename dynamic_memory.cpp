@@ -99,8 +99,8 @@ int str_cmp_with_begin(const void* arg1, const void* arg2)
     if ((*(str*)arg2).len_ == 0) return -1;
 
 
-    while ((!(isletter((*(str*)arg1).str_[i]))) && (i < (*(str*)arg1).len_)) i++;
-    while ((!(isletter((*(str*)arg2).str_[j]))) && (j < (*(str*)arg2).len_)) j++;
+    while ((!(isletter((*((str*)arg1)).str_[i]))) && (i < (*(str*)arg1).len_)) i++;
+    while ((!(isletter((*((str*)arg2)).str_[j]))) && (j < (*(str*)arg2).len_)) j++;
 
     while (tolower((*(str*)arg1).str_[i]) == tolower((*(str*)arg2).str_[j]))
     {
@@ -139,7 +139,7 @@ int main()
     //Test_isletter();
     //return 0;
 
-    FILE* const in  = fopen("inputbl.txt",  "r");
+    FILE* const in  = fopen("input.txt",  "r");
     FILE* const out = fopen("output.txt", "w");
 
     uint64_t num_symbols = len_of_file(in);
@@ -152,7 +152,7 @@ int main()
 
     make_lines(start, lines, num_symbols);
 
-    qsort(lines, num_str, sizeof(str), str_cmp_with_end);
+    qsort(lines, num_str, sizeof(str), str_cmp_with_begin);
 
     print_lines(lines, num_str, out);
 
@@ -180,7 +180,7 @@ void Test_isletter()
     if (isletter('Ы') == 1) printf("Test in line %d OK\n", __LINE__);
     else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
 
-    if (isletter('?') == 0) printf("Test in line %d OK\n", __LINE__);
+    if (isletter('»') == 0) printf("Test in line %d OK\n", __LINE__);
     else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
 
     if (isletter('6') == 0) printf("Test in line %d OK\n", __LINE__);
