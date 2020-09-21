@@ -131,14 +131,18 @@ int str_cmp_with_end(const void* arg1, const void* arg2)
     return tolower((*(str*)arg1).str_[i]) - tolower((*(str*)arg2).str_[j]);
 }
 
+
+void Test_all();
 void Test_isletter();
 void Test_str_cmp_with_begin();
+void Test_str_cmp_with_end();
+void Test_len_of_file();
+void Test_num_lines();
 
 
 int main()
 {
-    Test_str_cmp_with_begin()
-    //Test_isletter();
+    Test_all();
     return 0;
 
     FILE* const in  = fopen("input.txt",  "r");
@@ -165,6 +169,15 @@ int main()
     free(lines);
     return 0;
 }
+void Test_all()
+{
+Test_isletter();
+Test_str_cmp_with_begin();
+Test_str_cmp_with_end();
+Test_len_of_file();
+Test_num_lines();
+}
+
 
 void Test_isletter()
 {
@@ -189,4 +202,99 @@ void Test_isletter()
     else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
 
 }
+
+void Test_str_cmp_with_begin()
+{
+    printf("\nTest \"str_cmp_with_begin\"\n");
+    str test1;
+    str test2;
+
+
+    test1.str_ =    "aabcdefg";
+    test1.len_ =             8;
+    test2.str_ = "abcdsfvcfew";
+    test2.len_ =            11;
+
+    if (str_cmp_with_begin(&test1, &test2) < 0)    printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    test1.str_ = "().aabcdefg";
+    test1.len_ =            11;
+    test2.str_ = "abcdsfvcfew";
+    test2.len_ =            11;
+
+    if (str_cmp_with_begin(&test1, &test2) < 0)    printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    test1.str_ =    "zzbcdefg";
+    test1.len_ =             8;
+    test2.str_ = "!_cdsfvcfew";
+    test2.len_ =            11;
+
+    if (str_cmp_with_begin(&test1, &test2) > 0)    printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+}
+
+void Test_str_cmp_with_end()
+{
+    printf("\nTest \"str_cmp_with_end\"\n");
+    str test1;
+    str test2;
+
+
+    test1.str_ =    "aabcdefg";
+    test1.len_ =             8;
+    test2.str_ = "abcdsfvcfew";
+    test2.len_ =            11;
+
+    if (str_cmp_with_end(&test1, &test2) < 0)    printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    test1.str_ = "().aabcdefg";
+    test1.len_ =            11;
+    test2.str_ = "absfvcfew..";
+    test2.len_ =            11;
+
+    if (str_cmp_with_end(&test1, &test2) < 0)    printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+    test1.str_ =    "zzbcdefg";
+    test1.len_ =             8;
+    test2.str_ = "!_cdsfvcaa(";
+    test2.len_ =            11;
+
+    if (str_cmp_with_end(&test1, &test2) > 0)    printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+}
+
+void Test_len_of_file()
+{
+    printf("\nTest \"len_of_file\"\n");
+    FILE* test = fopen("test.txt", "w");
+    fprintf(test, "%s\n", "ewfwecvwev vdf vdf vdf\nsdvsd dsv");
+    fclose(test);
+    FILE* test_ = fopen("test.txt", "r");
+
+    if (len_of_file(test_) == 35) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+
+}
+
+void Test_num_lines()
+{
+    printf("\nTest \"num_lines\"\n");
+    char* str = "avada\n kedavra\n";
+    if (num_lines(str, 17) == 3) printf("Test in line %d OK\n", __LINE__);
+    else printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__);
+}
+
+
+
+
+
+
+
+
+
+
 
