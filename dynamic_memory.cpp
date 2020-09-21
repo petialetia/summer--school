@@ -73,20 +73,15 @@ int num_lines(char* start, uint64_t num_symbols)
 //!
 //!  @note if you have windows, function will clear text from '\r'
 //-----------------------------------------------
-void read_file(FILE* in, uint64_t num_symbols, char* start)
+int read_file(FILE* in, uint64_t num_symbols, char* start)
 {
     assert(in != nullptr);
 
-    fread(start, sizeof(char), num_symbols, in);
+    int real_num_symbols = fread(start, sizeof(char), num_symbols, in);
     #if _WIN32
-    int i = 0,
-        j = 0;
-    for (i = 0, j = 0; i < num_symbols; ++i)
-    {
-        if (start[i] != '\r') start[j++] = start[i];
-    }
-    start[j] = '\0';
+        start[real_num_symbols + 1] = '\0';
     #endif
+    return real_num_symbols;
 }
 
 //-----------------------------------------------
@@ -235,7 +230,7 @@ int main()
     uint64_t num_symbols = len_of_file(in);
 
     char* start  = (char*)calloc(num_symbols + 1, sizeof(char));
-    read_file(in, num_symbols, start);
+    num_symbols = read_file(in, num_symbols, start);
     int num_str = num_lines(start, num_symbols);
 
     struct str* lines = (str*)calloc(num_str + 1, sizeof(str));
@@ -372,8 +367,6 @@ void Test_num_lines()
     if (num_lines(str, 17) == 3) ok;
     else fail;
 }
-
-
 
 
 
