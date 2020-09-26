@@ -162,6 +162,22 @@ void swap(void* pointer1, void* pointer2, int size_elem)
     }
 }
 
+void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
+{
+    assert(begin != 0);
+    for(int i = 1; i < size; ++i)
+    {
+        int j = i - 1;
+        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0)
+        {
+            swap((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem, size_elem);
+            printf("%p  %p\n", (char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem);
+            j--;
+
+        }
+    }
+}
+
 //-----------------------------------------------
 //!  partition - separation array into two parts(below and more than pivot)
 //!
@@ -220,6 +236,12 @@ void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, cons
             return;
         }
     }
+    if (size < 5)
+    {
+        insertionSort(begin, size, size_elem, cmp);
+        return;
+    }
+
     int pos = partition(begin, size, size_elem, cmp);
 
     quickSort((char*)begin, pos, size_elem, cmp);
@@ -334,7 +356,7 @@ void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* s
 //!
 //!  @param [in] start   first pointer to free
 //!  @param [in] lines   second pointer to free
-//!    
+//!
 //-----------------------------------------------
 
 void free_all(char** start, str** lines)
