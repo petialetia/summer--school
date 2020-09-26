@@ -4,7 +4,7 @@
 
 const int N = 1000;
 
-int partition(int* begin, int size, int size_elem, int(*cmp(const void*, const void*)));
+int partition(int* begin, int size, int size_elem, int(*cmp)(const void*, const void*));
 
 void swap(void* pointer1, void* pointer2, int size)
 {
@@ -18,7 +18,7 @@ void swap(void* pointer1, void* pointer2, int size)
 }
 
 
-void quickSort(int* start, int size, int size_elem, int(*cmp(const void*, const void*)))
+void quickSort(int* start, int size, int size_elem, int(*cmp)(const void*, const void*))
 {
     assert(start != 0);
 
@@ -34,7 +34,7 @@ void quickSort(int* start, int size, int size_elem, int(*cmp(const void*, const 
         }
         else
         {
-            swap(start, start + 1, sizeof(int));
+            swap(start, start + 1, size_elem);
             return;
         }
     }
@@ -63,7 +63,7 @@ int partition(int* begin, int size, int size_elem, int(*cmp)(const void*, const 
 
 int int_cmp(const void* arg1, const void* arg2)
 {
-    return (const int*)arg1 - (const int*)arg2;
+    return *(const int*)arg1 - *(const int*)arg2;
 }
 
 
@@ -71,7 +71,7 @@ int main()
 {
     int array[N] = {0};
 
-    for (int i = 0; i < N; ++i)
+    for (int i = 1; i < N; ++i)
     {
         array[i] = rand()%213;
     }
@@ -80,7 +80,6 @@ int main()
     {
         printf("%d  ", array[i]);
     }
-
 
     return 0;
 }
