@@ -1,10 +1,11 @@
-#include <stdlib.h>            
+//#include "include.h"
+
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-//#include <TxLib.h>
 
 #define OK   printf("Test in line %d OK\n",                                           __LINE__)
 #define FAIL printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__)
@@ -42,6 +43,7 @@ uint64_t len_of_file(FILE* in)
 //!  @return 1 if letter is     a letter
 //!  @return 0 if letter is not a letter
 //-----------------------------------------------
+
 int isletter(char letter)
 {
     if (((letter >= 'А') && ('п' >= letter)) || ((letter >= 'A') && ('z' >= letter)) || (('р' >= letter) && ('я' <= letter))) return 1;
@@ -56,7 +58,8 @@ int isletter(char letter)
 //!
 //!  @return number of lines
 //-----------------------------------------------
-int num_lines(char* start, uint64_t num_symbols)
+
+int num_lines(const char* start, uint64_t num_symbols)
 {
     assert(start != nullptr);
 
@@ -75,6 +78,7 @@ int num_lines(char* start, uint64_t num_symbols)
 //!
 //!  @note if you have windows, function will clear text from '\r'
 //-----------------------------------------------
+
 int read_file(FILE* in, uint64_t num_symbols, char* start)
 {
     assert(in != nullptr);
@@ -95,27 +99,28 @@ int read_file(FILE* in, uint64_t num_symbols, char* start)
 //!
 //!  @note also calculates lenght of each string
 //-----------------------------------------------
+
 void make_lines(char* start, str* lines, uint64_t num_symbols)
 {
     assert(start != nullptr);
     assert(lines != nullptr);
 
-    int lastI = 0;
-    int j     = 0;
+    int lastI    = 0;
+    int Num_line = 0;
 
-    lines[j++].str_ = start;
+    lines[Num_line++].str_ = start;
 
     for (uint64_t i = 0; i < num_symbols; ++i)
     {
         if (start[i] == '\n')
         {
             start[i] = '\0';
-            lines[j - 1].len_ = i - lastI;
+            lines[Num_line - 1].len_ = i - lastI;
             lastI = i + 1;
-            lines[j++].str_ = &start[i+1];
+            lines[Num_line++].str_ = &start[i+1];
         }
     }
-    lines[j - 1].len_ = num_symbols - lastI;
+    lines[Num_line - 1].len_ = num_symbols - lastI;
 }
 
 //-----------------------------------------------
@@ -126,6 +131,7 @@ void make_lines(char* start, str* lines, uint64_t num_symbols)
 //!  @param [in] out    file where we printing
 //!
 //-----------------------------------------------
+
 void print_lines(struct str* lines, int num, FILE* const out)
 {
     assert(lines != nullptr);
@@ -135,6 +141,122 @@ void print_lines(struct str* lines, int num, FILE* const out)
         fprintf(out, "%s\n", lines[j].str_);
 }
 
+//-----------------------------------------------
+//!  swapping two values
+//!
+//!  @param [in] pointer1   pointer to first value
+//!  @param [in] pointer1   pointer to first value
+//!  @param [in] size_elem  size of values
+//!
+//!  @note 3rd argument usually is sizeof(value)
+//-----------------------------------------------
+
+void swap(void* pointer1, void* pointer2, int size_elem)
+{
+    char tmp = '\0';
+    for(int i = 0; i < size_elem; ++i)
+    {
+        tmp = ((char*)pointer1)[i];
+        ((char*)pointer1)[i] = ((char*)pointer2)[i];
+        ((char*)pointer2)[i] = tmp;
+    }
+}
+
+//-----------------------------------------------
+//!  insertion sorting algorithm
+//!
+//!  @param [in] begin       pointer to start of array
+//!  @param [in] size        number of elements in array
+//!  @param [in] size_elem   size of elements
+//!  @param [in] cmp         comparator to sort
+//!
+//-----------------------------------------------
+
+void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
+{
+    assert(begin != 0);
+    for(int i = 1; i < size; ++i)
+    {
+        int j = i - 1;
+        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0)
+        {
+            swap((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem, size_elem);
+            printf("%p  %p\n", (char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem);
+            j--;
+
+        }
+    }
+}
+
+//-----------------------------------------------
+//!  partition - separation array into two parts(below and more than pivot)
+//!
+//!  @param [in] begin       pointer to start of array
+//!  @param [in] size        number of elements in array
+//!  @param [in] size_elem   size of elements
+//!  @param [in] cmp         comparator to sort
+//!
+//!  @return position of pivot
+//-----------------------------------------------
+
+int partition(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
+{
+    assert(begin != 0);
+    int i = 1;
+
+    for(int j = 1; j < size; ++j)
+    {
+        if (cmp((char*)begin, (char*)begin + j*size_elem) > 0)
+        {
+            swap((char*)begin + j*size_elem, (char*)begin + i*size_elem, size_elem);
+            ++i;
+        }
+    }
+    swap((char*)begin, (char*)begin + (i - 1)*size_elem, size_elem);
+    return i - 1;
+}
+
+//-----------------------------------------------
+//!  quick sort - recursive sorting algorithm
+//!
+//!  @param [in] begin       pointer to start of array
+//!  @param [in] size        number of elements in array
+//!  @param [in] size_elem   size of elements
+//!  @param [in] cmp         comparator to sort
+//!
+//-----------------------------------------------
+
+void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
+{
+    assert(begin != 0);
+
+    if (size <= 1)
+    {
+        return;
+    }
+    if (size == 2)
+    {
+        if (cmp((char*)begin, (char*)begin + 1*size_elem) <= 0)
+        {
+            return;
+        }
+        else
+        {
+            swap((char*)begin, (char*)begin + 1*size_elem, size_elem);
+            return;
+        }
+    }
+    if (size < 5)
+    {
+        insertionSort(begin, size, size_elem, cmp);
+        return;
+    }
+
+    int pos = partition(begin, size, size_elem, cmp);
+
+    quickSort((char*)begin, pos, size_elem, cmp);
+    quickSort((char*)begin + (pos + 1)*size_elem, size - pos - 1, size_elem, cmp);
+}
 
 //-----------------------------------------------
 //!  comparator for qsort to compare strings with begin
@@ -208,14 +330,24 @@ int str_cmp_with_end(const void* arg1, const void* arg2)
     return tolower(argg1.str_[i]) - tolower(argg2.str_[j]);
 }
 
+//-----------------------------------------------
+//!  sorting array and printing it
+//!
+//!  @param [in] lines        pointer to array of structs
+//!  @param [in] num_str      number of lines in the text
+//!  @param [in] out          file to print
+//!  @param [in] num_symbols  number of symbols in the text
+//!
+//-----------------------------------------------
+
 void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* start)
 {
-    qsort(lines, num_str, sizeof(str), str_cmp_with_begin);
+    quickSort(lines, num_str, sizeof(str), str_cmp_with_begin);
     print_lines(lines, num_str, out);
 
     fprintf(out, "\n\n----------------------------------------------------------\n\n");
 
-    qsort(lines, num_str, sizeof(str), str_cmp_with_end);
+    quickSort(lines, num_str, sizeof(str), str_cmp_with_end);
     print_lines(lines, num_str, out);
 
     fprintf(out, "\n\n----------------------------------------------------------\n\n");
@@ -229,7 +361,13 @@ void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* s
         else putc(start[i], out);
 }
 
-
+//-----------------------------------------------
+//!  free all dynamic memory
+//!
+//!  @param [in] start   first pointer to free
+//!  @param [in] lines   second pointer to free
+//!
+//-----------------------------------------------
 
 void free_all(char** start, str** lines)
 {
@@ -250,13 +388,12 @@ void Test_len_of_file();
 void Test_num_lines();
 
 
-int main()
+int main(int argc, const char* argv[])
 {
     //Test_all();
     //return 0;
 
-    FILE* const in  = fopen("input.txt",  "r");
-    FILE* const out = fopen("output.txt", "w");
+    FILE* in = (argc - 1 > 0)? fopen(argv[1], "r") : fopen("inputbl.txt",  "r");
 
     uint64_t num_symbols = len_of_file(in);
 
@@ -268,7 +405,8 @@ int main()
 
     make_lines(start, lines, num_symbols);
 
-    sort_and_print(lines, num_str, out, num_symbols, start);
+	FILE* const out = fopen("output.txt", "w");
+    sort_and_print(lines, num_str, out, num_symbols, start);  //менкопи копирует элементы
 
     fclose(in );
     fclose(out);
@@ -391,13 +529,8 @@ void Test_len_of_file()
 void Test_num_lines()
 {
     printf("\nTest \"num_lines\"\n");
-    char* str = "avada\n kedavra\n";
+    const char* str = "avada\n kedavra\n";
 
     if (num_lines(str, 17) == 3) OK;
     else FAIL;
 }
-
-
-
-
-
