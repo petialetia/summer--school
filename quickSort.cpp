@@ -16,7 +16,6 @@ struct str
     int         len_ =       0;
 };
 
-
 //-----------------------------------------------
 //!  calculates file length
 //!
@@ -35,7 +34,6 @@ uint64_t len_of_file(FILE* in)
 
     return pos;
 }
-
 
 //-----------------------------------------------
 //!  checking if the letter
@@ -148,9 +146,9 @@ void print_lines(struct str* lines, int num, FILE* const out)
 //!
 //!  @param [in] pointer1   pointer to first value
 //!  @param [in] pointer1   pointer to first value
-//!  @param [in] size_elem  size of values    
+//!  @param [in] size_elem  size of values
 //!
-//!  @note 3rd argument usually is sizeof(value) 
+//!  @note 3rd argument usually is sizeof(value)
 //-----------------------------------------------
 
 void swap(void* pointer1, void* pointer2, int size_elem)
@@ -164,16 +162,15 @@ void swap(void* pointer1, void* pointer2, int size_elem)
     }
 }
 
-
 //-----------------------------------------------
 //!  partition - separation array into two parts(below and more than pivot)
 //!
 //!  @param [in] begin       pointer to start of array
 //!  @param [in] size        number of elements in array
-//!  @param [in] size_elem   size of elements 
-//!  @param [in] cmp         comparator to sort 
+//!  @param [in] size_elem   size of elements
+//!  @param [in] cmp         comparator to sort
 //!
-//!  @return position of pivot 
+//!  @return position of pivot
 //-----------------------------------------------
 
 int partition(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
@@ -193,15 +190,14 @@ int partition(void* begin, int size, int size_elem, int(*cmp)(const void*, const
     return i - 1;
 }
 
-
 //-----------------------------------------------
 //!  quick sort - recursive sorting algorithm
 //!
 //!  @param [in] begin       pointer to start of array
 //!  @param [in] size        number of elements in array
-//!  @param [in] size_elem   size of elements 
-//!  @param [in] cmp         comparator to sort 
-//! 
+//!  @param [in] size_elem   size of elements
+//!  @param [in] cmp         comparator to sort
+//!
 //-----------------------------------------------
 
 void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
@@ -229,7 +225,6 @@ void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, cons
     quickSort((char*)begin, pos, size_elem, cmp);
     quickSort((char*)begin + (pos + 1)*size_elem, size - pos - 1, size_elem, cmp);
 }
-
 
 //-----------------------------------------------
 //!  comparator for qsort to compare strings with begin
@@ -303,6 +298,16 @@ int str_cmp_with_end(const void* arg1, const void* arg2)
     return tolower(argg1.str_[i]) - tolower(argg2.str_[j]);
 }
 
+//-----------------------------------------------
+//!  sorting array and printing it
+//!
+//!  @param [in] lines        pointer to array of structs
+//!  @param [in] num_str      number of lines in the text
+//!  @param [in] out          file to print
+//!  @param [in] num_symbols  number of symbols in the text
+//!
+//-----------------------------------------------
+
 void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* start)
 {
     quickSort(lines, num_str, sizeof(str), str_cmp_with_begin);
@@ -324,7 +329,13 @@ void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* s
         else putc(start[i], out);
 }
 
-
+//-----------------------------------------------
+//!  free all dynamic memory
+//!
+//!  @param [in] start   first pointer to free
+//!  @param [in] lines   second pointer to free
+//!    
+//-----------------------------------------------
 
 void free_all(char** start, str** lines)
 {
