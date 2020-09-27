@@ -153,7 +153,9 @@ void print_lines(struct str* lines, int num, FILE* const out)
 
 void swap(void* pointer1, void* pointer2, int size_elem)
 {
-    char tmp = '\0';
+    assert(pointer1 != 0);
+    assert(pointer2 != 0);
+    char tmp =  '\0';
     for(int i = 0; i < size_elem; ++i)
     {
         tmp = ((char*)pointer1)[i];
@@ -175,6 +177,7 @@ void swap(void* pointer1, void* pointer2, int size_elem)
 void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
 {
     assert(begin != 0);
+
     for(int i = 1; i < size; ++i)
     {
         int j = i - 1;
@@ -246,7 +249,7 @@ void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, cons
             return;
         }
     }
-    if (size < 5)
+    if (size < 15)
     {
         insertionSort(begin, size, size_elem, cmp);
         return;
