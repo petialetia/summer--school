@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-const int N = 100000;
+const int N = 1000;
 
 void swap(void* pointer1, void* pointer2, int size);
 
@@ -13,7 +13,7 @@ void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, 
     for(int i = 1; i < size; ++i)
     {
         int j = i - 1;
-        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0)
+        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0 && j > 0)
         {
             swap((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem, size_elem);
             j--;
@@ -23,6 +23,9 @@ void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, 
 
 void swap(void* pointer1, void* pointer2, int size)
 {
+    assert(pointer1 != 0);
+    assert(pointer2 != 0);
+
     char tmp = '\0';
     for(int i = 0; i < size; ++i)
     {
@@ -104,6 +107,6 @@ int main()
     {
         printf("%d  ", array[i]);
     }
-     
+
     return 0;
 }
