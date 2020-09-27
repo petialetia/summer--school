@@ -184,7 +184,6 @@ void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, 
         while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0 && j > 0)
         {
             swap((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem, size_elem);
-            printf("%p  %p\n", (char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem);
             j--;
 
         }
