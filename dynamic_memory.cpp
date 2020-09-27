@@ -155,6 +155,7 @@ void swap(void* pointer1, void* pointer2, int size_elem)
 {
     assert(pointer1 != 0);
     assert(pointer2 != 0);
+
     char tmp =  '\0';
     for(int i = 0; i < size_elem; ++i)
     {
@@ -249,7 +250,7 @@ void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, cons
             return;
         }
     }
-    if (size < 15)
+    if (size < 5)
     {
         insertionSort(begin, size, size_elem, cmp);
         return;
@@ -309,8 +310,8 @@ int str_cmp_with_begin(const void* arg1, const void* arg2)
 
 int str_cmp_with_end(const void* arg1, const void* arg2)
 {
-    int i = (*(str*)arg1).len_,
-        j = (*(str*)arg2).len_;
+    int i = ((str*)arg1)->len_,
+        j = ((str*)arg2)->len_;
 
     str argg1 = *(str*)arg1;
     str argg2 = *(str*)arg2;
