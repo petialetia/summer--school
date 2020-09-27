@@ -9,7 +9,6 @@
 
 #define OK   printf("Test in line %d OK\n",                                           __LINE__)
 #define FAIL printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__)
-
 struct str
 {
     const char* str_ = nullptr;
@@ -182,7 +181,7 @@ void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, 
     for(int i = 1; i < size; ++i)
     {
         int j = i - 1;
-        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0)
+        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0 && j > 0)
         {
             swap((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem, size_elem);
             printf("%p  %p\n", (char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem);
@@ -250,7 +249,7 @@ void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, cons
             return;
         }
     }
-    if (size < 5)
+    if (size < 15)
     {
         insertionSort(begin, size, size_elem, cmp);
         return;
