@@ -29,7 +29,7 @@ void push(Stack* stack, int value)
     assert(stack);
 
     stack->size_++;
-    if (stack->size_ == stack->capacity_)
+    if (stack->size_ == stack->capacity_ - 1)
     {
         int* tmp = (int*)realloc(stack->buffer_, stack->capacity_*2);
         assert(tmp);
