@@ -19,7 +19,7 @@ struct str
 struct text
 {
     uint64_t num_symbols = 0;
-    uint64_t num_str   = 0;
+    uint64_t num_str = 0;
     str* lines = nullptr;
     char* start = nullptr;
 };
@@ -53,7 +53,9 @@ uint64_t len_of_file(FILE* in)
 
 int isletter(char letter)
 {
-    if(((letter >= 'А') && ('п' >= letter)) || ((letter >= 'A') && ('z' >= letter)) || (('р' >= letter) && ('ё' <= letter))) return 1;
+    if((('А' <= letter) && (letter <= 'п')) || 
+       ((letter >= 'A') && ('z' >= letter)) || 
+       (('р' >= letter) && ('ё' <= letter))) return 1;
     else return 0;
 }
 
@@ -163,10 +165,9 @@ void swap(void* pointer1, void* pointer2, int size_elem)
     assert(pointer1 != 0);
     assert(pointer2 != 0);
 
-    char tmp =  '\0';
     for(int i = 0; i < size_elem; ++i)
     {
-        tmp = ((char*)pointer1)[i];
+        char tmp = ((char*)pointer1)[i];
         ((char*)pointer1)[i] = ((char*)pointer2)[i];
         ((char*)pointer2)[i] = tmp;
     }
@@ -296,15 +297,15 @@ int str_cmp_with_begin(const void* arg1, const void* arg2)
     assert(arg1 != nullptr);
     assert(arg2 != nullptr);
 
-    str argg1 = *(str*)arg1;
-    str argg2 = *(str*)arg2;
+    str* argg1 = (str*)arg1;
+    str* argg2 = (str*)arg2;
 
     if (argg1.len_ == 0) return  1;
     if (argg1.len_ == 0) return -1;
 
 
-    while ((!(isletter(argg1.str_[i]))) && (i < argg1.len_)) i++;
-    while ((!(isletter(argg2.str_[j]))) && (j < argg2.len_)) j++;
+    while ((!(isletter(argg1->str_[i]))) && (i < argg1->len_)) i++;
+    while ((!(isletter(argg2->str_[j]))) && (j < argg2->len_)) j++;
 
     while (tolower(argg1.str_[i]) == tolower(argg2.str_[j]))
     {
@@ -385,8 +386,8 @@ void sort_and_print(text* hamlet, FILE* out)
 //!  reading file, making lines, calculating number of
 //!  lines and symbols
 //!
-//!  @param [in] hamlet        pointer to struckt text
-//!  @param [in] in            file read from
+//!  @param [in] hamlet  pointer to struct text
+//!  @param [in] in      file read from
 //!
 //!  @note text includes num_symbols, num_str,
 //!             pointer start and pointer lines
@@ -395,10 +396,15 @@ void sort_and_print(text* hamlet, FILE* out)
 void readTextAndMakeLines(text* hamlet, FILE* in)
 {
     hamlet->num_symbols = len_of_file(in);
+    
     hamlet->start       = (char*)calloc(hamlet->num_symbols + 1, sizeof(char));
+    
     hamlet->num_symbols = read_file(in, hamlet->num_symbols, hamlet->start);
+    
     hamlet->num_str     = num_lines(hamlet->start, hamlet->num_symbols);
+    
     hamlet->lines       = (str*)calloc(hamlet->num_str + 1, sizeof(str));
+    
     make_lines(hamlet->start, hamlet->lines, hamlet->num_symbols);
 }
 
@@ -417,6 +423,7 @@ void free_all(text* hamlet)
 
     free(hamlet->start);
          hamlet->start = nullptr;
+    
     free(hamlet->lines);
          hamlet->lines = nullptr;
 }
