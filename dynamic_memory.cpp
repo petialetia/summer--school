@@ -9,12 +9,20 @@
 
 #define OK   printf("Test in line %d OK\n",                                           __LINE__)
 #define FAIL printf("Test in line %d failed!!!!!!!!!!!!!!!!!!DDEEEBBAAAGGGG!!!!!!\n", __LINE__)
+
 struct str
 {
     const char* str_ = nullptr;
     int         len_ =       0;
 };
 
+struct text
+{
+    uint64_t num_symbols = 0;
+    uint64_t num_str   = 0;
+    str* lines = nullptr;
+    char* start = nullptr;
+};
 //-----------------------------------------------
 //!  calculates file length
 //!
@@ -45,7 +53,7 @@ uint64_t len_of_file(FILE* in)
 
 int isletter(char letter)
 {
-    if (((letter >= 'А') && ('п' >= letter)) || ((letter >= 'A') && ('z' >= letter)) || (('р' >= letter) && ('я' <= letter))) return 1;
+    if(((letter >= 'А') && ('п' >= letter)) || ((letter >= 'A') && ('z' >= letter)) || (('р' >= letter) && ('ё' <= letter))) return 1;
     else return 0;
 }
 
@@ -78,11 +86,11 @@ int num_lines(const char* start, uint64_t num_symbols)
 //!  @note if you have windows, function will clear text from '\r'
 //-----------------------------------------------
 
-int read_file(FILE* in, uint64_t num_symbols, char* start)
+uint64_t read_file(FILE* in, uint64_t num_symbols, char* start)
 {
     assert(in != nullptr);
 
-    int real_num_symbols = fread(start, sizeof(char), num_symbols, in);
+    uint64_t real_num_symbols = fread(start, sizeof(char), num_symbols, in);
     #if _WIN32
         start[real_num_symbols + 1] = '\0';
     #endif
@@ -176,7 +184,10 @@ void swap(void* pointer1, void* pointer2, int size_elem)
 
 void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
 {
-    assert(begin != 0);
+    assert(begin);
+    assert(size >= 0);
+    assert(size_elem > 0);
+    assert(cmp);
 
     for(int i = 1; i < size; ++i)
     {
@@ -203,7 +214,11 @@ void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, 
 
 int partition(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
 {
-    assert(begin != 0);
+    assert(begin);
+    assert(size >= 0);
+    assert(size_elem > 0);
+    assert(cmp);
+
     int i = 1;
 
     for(int j = 1; j < size; ++j)
@@ -230,7 +245,10 @@ int partition(void* begin, int size, int size_elem, int(*cmp)(const void*, const
 
 void quickSort(void* begin, int size, int size_elem, int(*cmp)(const void*, const void*))
 {
-    assert(begin != 0);
+    assert(begin);
+    assert(size >= 0);
+    assert(size_elem > 0);
+    assert(cmp);
 
     if (size <= 1)
     {
@@ -342,14 +360,14 @@ int str_cmp_with_end(const void* arg1, const void* arg2)
 //!
 //-----------------------------------------------
 
-void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* start)
+void sort_and_print(str* lines, uint64_t num_str, FILE* out, uint64_t num_symbols, char* start)
 {
     quickSort(lines, num_str, sizeof(str), str_cmp_with_begin);
     print_lines(lines, num_str, out);
 
     fprintf(out, "\n\n----------------------------------------------------------\n\n");
 
-    quickSort(lines, num_str, sizeof(str), str_cmp_with_end);
+    qsort(lines, num_str, sizeof(str), str_cmp_with_end);
     print_lines(lines, num_str, out);
 
     fprintf(out, "\n\n----------------------------------------------------------\n\n");
@@ -364,6 +382,27 @@ void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* s
 }
 
 //-----------------------------------------------
+//!  reading file, making lines, calculating number of
+//!  lines and symbols
+//!
+//!  @param [in] hamlet        pointer to struckt text
+//!  @param [in] in            file read from
+//!
+//!  @note text includes num_symbols, num_str,
+//!             pointer start and pointer lines
+//-----------------------------------------------
+
+void readTextAndMakeLines(text* hamlet, FILE* in)
+{
+    hamlet->num_symbols = len_of_file(in);
+    hamlet->start       = (char*)calloc(hamlet->num_symbols + 1, sizeof(char));
+    hamlet->num_symbols = read_file(in, hamlet->num_symbols, hamlet->start);
+    hamlet->num_str     = num_lines(hamlet->start, hamlet->num_symbols);
+    hamlet->lines       = (str*)calloc(hamlet->num_str + 1, sizeof(str));
+    make_lines(hamlet->start, hamlet->lines, hamlet->num_symbols);
+}
+
+//-----------------------------------------------
 //!  free all dynamic memory
 //!
 //!  @param [in] start   first pointer to free
@@ -371,15 +410,15 @@ void sort_and_print(str* lines, int num_str, FILE* out, int num_symbols, char* s
 //!
 //-----------------------------------------------
 
-void free_all(char** start, str** lines)
+void free_all(text* hamlet)
 {
-    assert((start) && (*start));
-    assert((lines) && (*lines));
+    assert(hamlet->start);
+    assert(hamlet->lines);
 
-    free(*start);
-        *start = nullptr;
-    free(*lines);
-        *lines = nullptr;
+    free(hamlet->start);
+         hamlet->start = nullptr;
+    free(hamlet->lines);
+         hamlet->lines = nullptr;
 }
 
 void Test_all();
@@ -396,24 +435,16 @@ int main(int argc, const char* argv[])
     //return 0;
 
     FILE* in = (argc - 1 > 0)? fopen(argv[1], "r") : fopen("inputbl.txt",  "r");
+    text hamlet = {};
 
-    uint64_t num_symbols = len_of_file(in);
-
-    char* start  = (char*)calloc(num_symbols + 1, sizeof(char));
-    num_symbols = read_file(in, num_symbols, start);
-    int num_str = num_lines(start, num_symbols);
-
-    str* lines = (str*)calloc(num_str + 1, sizeof(str));
-
-    make_lines(start, lines, num_symbols);
+    readTextAndMakeLines(&hamlet, in);
 
 	FILE* const out = fopen("output.txt", "w");
-    sort_and_print(lines, num_str, out, num_symbols, start);  //менкопи копирует элементы
+    sort_and_print(hamlet.lines, hamlet.num_str, out, hamlet.num_symbols, hamlet.start);
 
-    fclose(in );
+    fclose(in);
     fclose(out);
-
-    free_all(&start, &lines);
+    free_all(&hamlet);
 
     return 0;
 }
