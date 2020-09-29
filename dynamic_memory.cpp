@@ -360,25 +360,25 @@ int str_cmp_with_end(const void* arg1, const void* arg2)
 //!
 //-----------------------------------------------
 
-void sort_and_print(str* lines, uint64_t num_str, FILE* out, uint64_t num_symbols, char* start)
+void sort_and_print(text* hamlet, FILE* out)
 {
-    quickSort(lines, num_str, sizeof(str), str_cmp_with_begin);
-    print_lines(lines, num_str, out);
+    quickSort(hamlet->lines, hamlet->num_str, sizeof(str), str_cmp_with_begin);
+    print_lines(hamlet->lines, hamlet->num_str, out);
 
     fprintf(out, "\n\n----------------------------------------------------------\n\n");
 
-    qsort(lines, num_str, sizeof(str), str_cmp_with_end);
-    print_lines(lines, num_str, out);
+    qsort(hamlet->lines, hamlet->num_str, sizeof(str), str_cmp_with_end);
+    print_lines(hamlet->lines, hamlet->num_str, out);
 
     fprintf(out, "\n\n----------------------------------------------------------\n\n");
 
-    for (int i = 0; i < num_symbols; ++i)
-        if (start[i] == '\0')
+    for (int i = 0; i < hamlet->num_symbols; ++i)
+        if (hamlet->start[i] == '\0')
         {
             putc('\n', out);
             i++;
         }
-        else putc(start[i], out);
+        else putc(hamlet->start[i], out);
 }
 
 //-----------------------------------------------
@@ -440,9 +440,9 @@ int main(int argc, const char* argv[])
     readTextAndMakeLines(&hamlet, in);
 
 	FILE* const out = fopen("output.txt", "w");
-    sort_and_print(hamlet.lines, hamlet.num_str, out, hamlet.num_symbols, hamlet.start);
+    sort_and_print(&hamlet, out);
 
-    fclose(in);
+    fclose(in );
     fclose(out);
     free_all(&hamlet);
 
