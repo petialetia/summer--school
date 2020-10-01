@@ -3,13 +3,17 @@
 #include <stdint.h>
 #include <assert.h>
 #include <iso646.h>
+#include <string.h>
 
+enum {ENQUEUE = 0, DEQUEUE = 1, FRONT = 2, SIZE = 3, CLEAR = 4, MIN = 5};
 
 typedef int Elem_t;
 
 const int MAX_START_SIZE_STACK = 2000000;
 const int ERROR = -1;
-const Elem_t MAX_INT = 1231231;
+const Elem_t MAX_INT = 2147483647;
+const int NUM_METHODS = 6;
+const int STANDART_SIZE = 13;
 
 struct elemAndMin
 {
@@ -76,7 +80,7 @@ void enqueue(Stack* stack, Elem_t value)
 
 int minQueue(Stack* stackin, Stack* stackout)
 {
-    if (sizeQueue > 0)
+    if (sizeQueue(stackin, stackout) > 0)
     {
         if (stackin->buffer_[stackin->size_].min_ < stackout->buffer_[stackout->size_].min_)
         {
@@ -96,7 +100,10 @@ int minQueue(Stack* stackin, Stack* stackout)
 int dequeue(Stack* stackin, Stack* stackout)
 {
     int tmp = front(stackin, stackout);
-    pop(stackout);
+    if (tmp != ERROR)
+    {
+        pop(stackout);
+    }
     return tmp;
 }
 
@@ -151,19 +158,9 @@ int sizeQueue(Stack* stackin, Stack* stackout)
 
 void clear(Stack* stackin, Stack* stackout)
 {
-    free(stackin->buffer_);
     stackin->size_ = 0;
-    stackin->capacity_ = 0;
-    stackin = nullptr;
-    stackin->buffer_ = nullptr;
 
-    free(stackout->buffer_);
     stackout->size_ = 0;
-    stackout->capacity_ = 0;
-    stackout = nullptr;
-    stackout->buffer_ = nullptr;
-
-    printf("ok\n");
 }
 
 int isEmpty(Stack* stack)
@@ -180,22 +177,101 @@ int isEmpty(Stack* stack)
     }
 }
 
+int defineMethod(char** methods, char* method)
+{
+    for (int i = 0; i < NUM_METHODS; ++i)
+    {
+        if (!strcmp(methods[i], method))
+        {
+            return i;
+        }
+    }
+}
+
 int main()
 {
     Stack stackIn  = {};
     Stack stackOut = {};
-    Construct(&stackIn, 1);
-    Construct(&stackOut, 1);
-    enqueue(&stackIn, 2);
-    enqueue(&stackIn, 4);
-    enqueue(&stackIn, 6);
-    enqueue(&stackIn, 8);
+    Construct(&stackIn, STANDART_SIZE);
+    Construct(&stackOut, STANDART_SIZE);
 
-    printf("%d\n", front(&stackIn, &stackOut));
-    printf("%d\n", dequeue(&stackIn, &stackOut));
-    printf("%d\n", minQueue(&stackIn, &stackOut));
+    int N = 0;
+    scanf("%d", &N);
+    char* methods[] = {"enqueue", "dequeue", "front", "size", "clear", "min"};
 
+    for (int i = 0; i < N; ++i)
+    {
+        char method[10];
+        scanf("%s", &method);
+        int numMethod = defineMethod(methods, method);
 
+        switch (numMethod)
+        {
+            case ENQUEUE:
+            {
+                int value = 0;
+                scanf("%d", &value);
+                enqueue(&stackIn, value);
+                printf("ok\n");
+                break;
+            }
+            case DEQUEUE:
+            {
+                int tmp = dequeue(&stackIn, &stackOut);
+                if (tmp == ERROR)
+                {
+                    printf("error\n");
+                }
+                else
+                {
+                    printf("%d\n", tmp);
+                }
+                break;
+            }
+            case FRONT:
+            {
+                int tmp = front(&stackIn, &stackOut);
+                if (tmp == ERROR)
+                {
+                    printf("error\n");
+                }
+                else
+                {
+                    printf("%d\n", tmp);
+                }
+                break;
+            }
+            case SIZE:
+            {
+                printf("%d\n", sizeQueue(&stackIn, &stackOut));
+                break;
+            }
+            case CLEAR:
+            {
+                clear(&stackIn, &stackOut);
+                printf("ok\n");
+                break;
+            }
+            case MIN:
+            {
+                int tmp = minQueue(&stackIn, &stackOut);
+                if (tmp == ERROR)
+                {
+                    printf("error\n");
+                }
+                else
+                {
+                    printf("%d\n", tmp);
+                }
+                break;
+            }
+            default:
+            {
+                printf("I DONT KNOW WHAT IS THIS SHIT\n");
+                break;
+            }
+        }
+    }
 
     return 0;
 }
