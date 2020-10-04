@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-const int N = 1000;
 
 void swap(void* pointer1, void* pointer2, int size);
 
@@ -13,7 +12,7 @@ void insertionSort(void* begin, int size, int size_elem, int(*cmp)(const void*, 
     for(int i = 1; i < size; ++i)
     {
         int j = i - 1;
-        while(cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0 && j > 0)
+        while(j >= 0 && cmp((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem) < 0)
         {
             swap((char*)begin + (j + 1)*size_elem, (char*)begin + j*size_elem, size_elem);
             j--;
@@ -40,6 +39,8 @@ int partition(void* begin, int size, int size_elem, int(*cmp)(const void*, const
 {
     assert(begin != 0);
     int i = 1;
+
+    swap((char*)begin, (char*)begin + (size/2)*size_elem, size_elem);
 
     for(int j = 1; j < size; ++j)
     {
@@ -94,18 +95,20 @@ int int_cmp(const void* arg1, const void* arg2)
 
 int main()
 {
-    int array[N] = {0};
+    int N = 0;
+    scanf("%d", &N);
+    int* array = (int*)calloc(N, sizeof(int));
 
-    for (int i = 1; i < N; ++i)
+    for (int i = 0; i < N; ++i)
     {
-        array[i] = rand()%213;
+        scanf("%d", array + i);
     }
 
     quickSort(array, N, sizeof(int), int_cmp);
 
     for (int i = 0; i < N; ++i)
     {
-        printf("%d  ", array[i]);
+        printf("%d ", array[i]);
     }
 
     return 0;
