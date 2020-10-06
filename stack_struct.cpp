@@ -43,14 +43,15 @@ struct Stack
 
 void Construct(Stack* stack, uint64_t size);
 void push(Stack* stack, int value);
-void CheckBuffer(Stack* stack);
 int  top(Stack* stack);
-int  pop(Stack* stack);
+void pop(Stack* stack);
 void clear(Stack* stack);
 void Destroy(Stack* stack);
-int  StackOK    (Stack* stack);
-void StackDump  (Stack* stack);
-
+void CheckBuffer(Stack* stack);
+#ifndef NDEBUG
+int  StackOK(Stack* stack);
+void StackDump(Stack* stack);
+#endif
 
 
 
@@ -85,26 +86,6 @@ void push(Stack* stack, int value)
     stack->buffer_[stack->size_++] = value;
 
     ASSERT_OK
-}
-
-void CheckBuffer(Stack* stack)
-{
-    if (stack->size_ >= stack->capacity_ - 1)
-    {
-        Elem_t* tmp = (Elem_t*)realloc(stack->buffer_, stack->capacity_ * sizeof(Elem_t) * 2);
-        assert(tmp);
-        stack->capacity_ *= 2;
-        stack->buffer_ = tmp;
-        for (int i = stack->capacity_ - 1; i >= stack->capacity_ / 2; --i)
-        {
-            stack->buffer_[i] = NAN;
-        }
-    }
-    if (stack->size_ <= stack->capacity_ / 3)
-    {
-        stack->buffer_ = (Elem_t*)realloc(stack->buffer_, stack->capacity_ * sizeof(Elem_t) / 2);
-        stack->capacity_ /= 2;
-    }
 }
 
 int top(Stack* stack)
@@ -145,7 +126,7 @@ void clear(Stack* stack)
     for (int i = 0; i < stack->size_; ++i)
     {
         stack->buffer_[i] = NAN;
-    }
+    }                                            //DEBUG MODE HOW WORKS
     stack->size_ = 0;                            //должен ли clear реаллоцировать буффер до стандартного размера?
 }
 
@@ -156,6 +137,26 @@ void Destroy(Stack* stack)
     stack->size_ = 0;
     stack->capacity_ = 0;
     stack->buffer_ = nullptr;
+}
+
+void CheckBuffer(Stack* stack)
+{
+    if (stack->size_ >= stack->capacity_ - 1)
+    {
+        Elem_t* tmp = (Elem_t*)realloc(stack->buffer_, stack->capacity_ * sizeof(Elem_t) * 2);
+        assert(tmp);
+        stack->capacity_ *= 2;
+        stack->buffer_ = tmp;
+        for (int i = stack->capacity_ - 1; i >= stack->capacity_ / 2; --i)
+        {
+            stack->buffer_[i] = NAN;
+        }
+    }
+    if (stack->size_ <= stack->capacity_ / 3)
+    {
+        stack->buffer_ = (Elem_t*)realloc(stack->buffer_, stack->capacity_ * sizeof(Elem_t) / 2);
+        stack->capacity_ /= 2;
+    }
 }
 
 #ifndef NDEBUG
@@ -243,7 +244,7 @@ int main()
 {
     Stack myFirstTry = {};
     Construct(&myFirstTry, 1);
-    pop(&myFirstTry);
+    //pop(&myFirstTry);
     for (int i = 0; i < 50; i++)
     {
       push(&myFirstTry, i);
@@ -252,7 +253,12 @@ int main()
     {
       pop(&myFirstTry);
     }
-    //StackDump(&myFirstTry);
+    clear(&myFirstTry);
+    top(&myFirstTry);
+    for (int i = 0; i < 50; i++)
+    {
+      push(&myFirstTry, i);
+    }
     printf("<%d>", top(&myFirstTry));
 
 
